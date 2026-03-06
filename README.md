@@ -1,6 +1,6 @@
-# NeutralEye
+# NeutralEye - Bias Checker
 
-NeutralEye is an AI-powered browser extension designed to help users identify bias in online articles.
+NeutralEye - Bias Checker is an AI-powered browser extension designed to help users identify bias in online articles.
 
 ## What it does
 - Flags emotionally loaded language
