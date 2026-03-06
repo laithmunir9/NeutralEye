@@ -11,7 +11,7 @@ NeutralEye is an AI-powered Chrome extension that analyzes news articles in real
 - JavaScript
 - HTML/CSS
 - Chrome Extension APIs
-- NLP models
+- NLP models (Hugging Face Transformers)
 
 ## Notes
 Source code is currently private.
