@@ -1,95 +1,118 @@
-# NeutralEye — AI Media Bias Detection Chrome Extension
+# NeutralEye — AI-Powered Media Framing Analysis
 
-NeutralEye is an AI-powered Chrome extension that analyzes online news articles and highlights potential indicators of media bias.
+NeutralEye is an AI product that shows readers how a news article frames a
+story — not whether it's "biased," but how tone, framing, sourcing, and
+omission shape the reader's perception. It ships as both a Chrome extension
+and a full web application.
 
-The goal of the project is to help readers become more aware of bias patterns in news reporting while reading articles directly in their browser.
+**Live:**
+- Web app — [tryneutraleye.com](https://tryneutraleye.com)
+- Chrome Web Store — NeutralEye, Bias Checker
 
 ## Overview
 
-NeutralEye analyzes article text and flags patterns that may suggest bias, including:
+NeutralEye analyzes article text — pasted directly or pulled from a URL —
+and returns a structured breakdown across five signals, checked together
+in a single pass:
 
-• loaded or emotionally charged language  
-• imbalance in sources  
-• demographic framing patterns  
+- **Tone** — loaded or emotionally charged language
+- **Framing** — what's emphasized, what's backgrounded
+- **Attribution** — whether claims are sourced or left unattributed
+- **Source balance** — whether multiple perspectives are represented
+- **Omission** — relevant context that's missing from the piece
 
-The extension highlights these indicators directly within the browsing experience.
+Every flagged signal is tied to the exact quoted language from the
+article that triggered it, so the analysis can be checked against the
+source rather than taken on faith. Results also include a confidence
+score, a content-type classification (news vs. opinion vs. analysis,
+each held to different standards), and suggested sources covering the
+same story from a different vantage point.
 
 ## Architecture
 
-NeutralEye uses a separated frontend and backend architecture.
+NeutralEye is a Next.js application with a Chrome extension as a second
+client against the same backend.
 
-### Chrome Extension (Frontend)
+### Web App
+Built on Next.js (App Router), with the entire backend — analysis,
+auth, rate limiting, history — implemented as Next.js API routes rather
+than a separate server. Deployed on Vercel.
 
-The Chrome extension scans article text from the user's browser session and sends the content to a backend service for analysis.
+### Chrome Extension
+A lightweight content script and popup that extract article text from
+the active tab and call the same API routes the web app uses, so
+analysis behavior is consistent across both surfaces. Distributed via
+the Chrome Web Store.
 
-### Backend Service
-
-A FastAPI backend handles AI model requests and manages API communication.
-
-Sensitive information such as API keys is stored securely on the backend rather than inside the browser extension.
+### Database & Auth
+Supabase (PostgreSQL) handles authentication — including Google
+OAuth — and stores saved analysis history behind Row Level Security
+policies scoped per user.
 
 ### AI Processing
+Article text is run through a two-stage OpenAI pipeline: a lightweight
+pass for extraction/validation, followed by the main structured
+analysis call. The prompt explicitly excludes quotes from people
+covered in the article (the analysis targets the journalist's framing,
+not the opinions of sources being quoted), strips bylines and image
+captions before scoring, and distinguishes news from opinion content
+so persuasive writing in an op-ed isn't penalized the way it would be
+in a straight news report.
 
-Article text is analyzed using large language model APIs.  
-The system uses a consistent prompt structure to produce structured responses.
+### Infrastructure
+- **Hosting:** Vercel
+- **Database/Auth:** Supabase
+- **Rate limiting:** Upstash Redis
+- **Error monitoring:** Sentry
+- **Transactional email:** Resend
+- **DNS/CDN:** Cloudflare
 
 ## Current Features
 
-• Chrome extension that analyzes live news article text  
-• AI-powered text analysis using large language models  
-• detection of loaded language  
-• detection of source imbalance  
-• detection of demographic framing  
-• structured response handling  
-• logging and error handling for stability  
+- Article analysis via pasted text or URL, on web and in-browser via
+  the extension
+- Five-signal framing analysis with quoted evidence per signal
+- News vs. opinion/analysis classification with adjusted scoring
+  standards
+- Confidence scoring
+- Suggested sources for cross-reading the same story
+- Account system with saved analysis history (Supabase Auth + Google
+  OAuth)
+- Compare Analyses — side-by-side framing comparison across outlets
+  (Pro feature, gated preview live)
+- Production security hardening: SSRF protections on URL fetching,
+  sanitized HTML rendering in the extension, rate limiting, locked-down
+  CORS, and standard security headers
 
 ## Project Status
 
-Current version includes:
+NeutralEye has moved from a single-purpose Chrome extension into a full
+product with a marketing site, web app, and shared backend:
 
-• deployed Chrome extension  
-• frontend/backend architecture separation  
-• secure API key handling  
-• logging and error handling  
-• testing across 50+ UAE and international articles  
+- Live Chrome extension, published and in active use
+- Live web application at tryneutraleye.com
+- Unified backend serving both clients
+- Authentication, saved history, and a gated Pro preview (Compare
+  Analyses) shipped; Pro billing is not yet active — currently free
+  during beta
+- Security review completed and hardening fixes applied pre-launch
+- Responsive design pass across mobile, tablet, and desktop
 
-The extension is currently published on the Chrome Web Store.
-
-## Additional Interface
-
-A web interface is currently being developed that allows users to analyze articles outside the browser extension.
-
-The website uses the same backend and AI prompt architecture as the extension.
+**Roadmap:** Stripe billing for Pro, analytics, and expanded
+extension-side error monitoring.
 
 ## Technologies Used
 
-### Programming
-Python  
-JavaScript  
+**Languages:** JavaScript / TypeScript, SQL
 
-### Web
-HTML  
-CSS  
+**Framework:** Next.js (App Router), React
 
-### Backend
-FastAPI  
-REST API integration  
+**Backend:** Next.js API routes, Supabase (PostgreSQL, Auth, RLS)
 
-### AI / NLP
-LLM API integration  
-Prompt engineering  
-Transformer-based NLP tools (Hugging Face)
+**AI / NLP:** OpenAI API, prompt engineering for structured JSON output
 
-### Development Tools
-Git  
-Render deployment  
-Chrome Extensions API  
+**Infrastructure:** Vercel, Cloudflare, Upstash Redis, Sentry, Resend
 
-## Codebase
+**Extension:** Chrome Extensions API (Manifest V3)
 
-NeutralEye currently includes approximately **1,000+ lines of code** across frontend and backend components.
-
-## Creator
-
-Laith Munir  
-High school student interested in artificial intelligence, machine learning, and technology.
+**Tooling:** Git, Claude Code
