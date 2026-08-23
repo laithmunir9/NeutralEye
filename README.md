@@ -6,7 +6,7 @@ NeutralEye analyzes how news articles frame a story through tone, sourcing, emph
 
 **Live**
 - Web app: [tryneutraleye.com](https://tryneutraleye.com)
-- Chrome extension: NeutralEye, Bias Checker
+- Chrome extension: [NeutralEye, Bias Checker](https://chromewebstore.google.com/detail/neutraleye-bias-checker/fdkachmcdaebefhpkpjapoglbiakoffe)
 
 ## Overview
 
