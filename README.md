@@ -1,4 +1,4 @@
-# NeutralEye - Overview 
+# NeutralEye
 
 NeutralEye analyzes how news articles frame a story through tone, sourcing, emphasis, and omission. It is available as a web application and Chrome extension.
 
